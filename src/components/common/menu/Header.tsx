@@ -14,7 +14,7 @@ type HeaderProps = {
   user?: UserType;
 }
 
-export default function Header({ user }: HeaderProps) {
+export default function Header({ user, ...props }: HeaderProps) {
   const [isSearchVisible, setSearchVisible] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
 
@@ -34,7 +34,7 @@ export default function Header({ user }: HeaderProps) {
   }, []);
 
   return (
-    <div className='flex h-[7rem] w-[100%] min-w-[37.5rem] flex-row justify-between bg-black-300 align-middle md:h-[8rem] lg:h-[10rem]'>
+    <div className='flex h-[7rem] w-[100%] min-w-[37.5rem] flex-row justify-between bg-[#1c1c22] align-middle md:h-[8rem] lg:h-[10rem]'>
       <Image src={Hamburger} alt='side menu' className='ml-[2rem] block w-[2.4rem] md:hidden lg:hidden' />
       {!(windowWidth < 430 && isSearchVisible) && (
         <Link href='/' className='my-auto'>
