@@ -21,6 +21,12 @@ html {
 	font-family: "Pretendard";
 }
 
+@layer utilities {
+	.text-main-gradient {
+		@apply bg-main-gradient bg-clip-text text-transparent;
+	}
+}
+
 @font-face {
 	font-family: "Pretendard";
 	font-weight: 100;
