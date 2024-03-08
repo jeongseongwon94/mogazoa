@@ -20,14 +20,32 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Medium: Story = {
+export const MediumLoggedIn: Story = {
   args: {
     size: 'medium',
+    user: {
+      id: 1,
+    },
   },
 };
 
-export const Large: Story = {
+export const MediumLoggedOut: Story = {
+  args: {
+    size: 'medium',
+  }
+};
+
+export const LargeLoggedIn: Story = {
   args:{
     size: 'large',
+    user: {
+      id: 1,
+    },
   },
+};
+
+export const LargeLoggedOut: Story = {
+  args: {
+    size: 'large',
+  }
 };
