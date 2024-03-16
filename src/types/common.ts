@@ -7,3 +7,8 @@ export type Base = {
 export type Category = Base & {
 	name: string;
 };
+
+export type Response<T> = {
+	nextCursor: number;
+	list: T[];
+};
