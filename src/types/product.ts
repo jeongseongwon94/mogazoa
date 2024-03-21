@@ -27,6 +27,11 @@ export type ProductDetail = {
 			| "의류/잡화"
 			| "앱";
 	};
+	categoryMetric: {
+		rating: number;
+		favoriteCount: number;
+		reviewCount: number;
+	};
 };
 
 export type ReviewResponse = Response<Review>;
@@ -53,3 +58,4 @@ export type ReviewImages = {
 	source: string;
 	id: number;
 };
+
