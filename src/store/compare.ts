@@ -16,6 +16,7 @@ type State = {
 type Action = {
 	getEmptyPosition: () => string;
 	isAlreadyStoredProduct: (id: number) => boolean;
+	getCurrentProductPosition: (id: number) => string | undefined;
 	addProduct: (
 		newProduct: ProductInfo,
 		position?: Position,
@@ -41,9 +42,7 @@ const useCompareStore = create(
 
 				if (get().products.firstProduct === null) {
 					emptyPosition = "firstProduct";
-				}
-
-				if (get().products.secondProduct === null) {
+				} else if (get().products.secondProduct === null) {
 					emptyPosition = "secondProduct";
 				}
 
@@ -52,6 +51,13 @@ const useCompareStore = create(
 
 			isAlreadyStoredProduct: (id: number) =>
 				Object.values(get().products).some((product) => product?.id === id),
+
+			getCurrentProductPosition: (id: number) => {
+				for (const [position, product] of Object.entries(get().products)) {
+					if (product?.id === id) return position;
+				}
+				return undefined;
+			},
 
 			addProduct: (newProduct, position) => {
 				if (Object.values(get().products).every(Boolean))
