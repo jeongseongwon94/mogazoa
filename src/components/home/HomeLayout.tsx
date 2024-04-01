@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useRouter } from "next/router";
 import { useEffect,useState } from "react";
 
 import AddProductButton from "@/components/common/button/AddProductButton";
@@ -11,19 +12,16 @@ import useWindowWidth from "@/hooks/common/useWindowWidth";
 
 export default function HomeLayout() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
   const currentWidth = useWindowWidth();
   const [isWrapPoint, setIsWrapPoint] = useState(false);
   const [isOverflow, setIsOverflow] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState<string | null>(null);
+  const router = useRouter();
+  const searchKeyword = router.query.search as string;
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
-  };
-
-  const handleSearch = (searchKeyword:string) => {
-    setSearchKeyword(searchKeyword);
   };
 
   const handleCategorySelect = (categoryId: number | null, categoryName: string | null) => {
@@ -38,7 +36,7 @@ export default function HomeLayout() {
 
   return (
     <div className="h-screen bg-[#1c1c22]">
-      <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} onSearch={handleSearch} headerType="homeHeader" />
+      <Header toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} headerType="homeHeader" />
       <div className="w-[100%] overflow-auto bg-[#1c1c22] pb-[10rem]">
         <div className={clsx('flex flex-row', isWrapPoint ? 'lg:mx-[5rem]' : 'lg:mx-[18rem]')}>
           <SideBar isSidebarOpen={isSidebarOpen} onCategorySelect={handleCategorySelect} />
