@@ -1,20 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 import clsx from "clsx";
 import Image from "next/image";
 import { useEffect } from "react";
 
 import { deleteFavorite, postFavorite } from "@/apis/products";
-<<<<<<< HEAD
-import ProductModal from "@/components/common/modal/product/ProductModal";
-=======
 import { getMe } from "@/apis/user";
->>>>>>> 8956aa26bf80ae295f2aa575acb3f2c711220f81
+import ProductModal from "@/components/common/modal/product/ProductModal";
+import { moveModalText } from "@/constants/modalText";
 import useCompareModal from "@/hooks/compare/useCompareModal";
 import { useModalActions } from "@/store/modal";
 import { ProductDetail } from "@/types/product";
 import cn from "@/utils/cn";
-import getCookies from "@/utils/getCookies";
-import { moveModalText } from "@/utils/modalText";
 
 import BasicButton from "../common/button/BasicButton";
 import CategoryBadge from "../common/categoryBadge/CategoryBadge";
@@ -42,29 +39,24 @@ export default function DetailCard({ productData, isMyProduct }: Props) {
 	const { name, description, image, isFavorite, category, id } = productData;
 	const { openModal, closeModal } = useModalActions();
 
-	const { isError } = useQuery({
+	const { error } = useQuery({
 		queryKey: ["me"],
 		queryFn: () => getMe(),
 		retry: false,
 	});
 
-	const cookie = getCookies();
-	const accessToken = cookie["accessToken"];
-
 	const handleReviewCreateButton = () => {
-		if (isError) {
-			const modalId = openModal(
-				<MovingPageModal
-					closeModal={() => closeModal(modalId)}
-					description={moveModalText.signin}
-					url="/signin"
-				/>,
-				{
-					isCloseClickOutside: true,
-					isCloseESC: true,
-				},
-			);
-			return;
+		if (isAxiosError(error)) {
+			if (error.request.status === 401) {
+				const modalId = openModal(
+					<MovingPageModal
+						closeModal={() => closeModal(modalId)}
+						description={moveModalText.signin}
+						url="/signin"
+					/>,
+				);
+				return;
+			}
 		}
 
 		const modalId = openModal(
@@ -73,29 +65,21 @@ export default function DetailCard({ productData, isMyProduct }: Props) {
 				closeModal={() => closeModal(modalId)}
 				productId={id}
 			/>,
-			{
-				isCloseClickOutside: true,
-				isCloseESC: true,
-			},
 		);
 	};
 
-<<<<<<< HEAD
 	const handleEditButtonClick = () => {
 		const modal = openModal(
-			<ProductModal type="edit" productId={id} closeModal={() => closeModal(modal)} />
-		)
-	}
+			<ProductModal
+				type="edit"
+				productId={id}
+				closeModal={() => closeModal(modal)}
+			/>,
+		);
+	};
 
-	const cookie = getCookies();
-	const accessToken = cookie["accessToken"];
-
-=======
->>>>>>> 8956aa26bf80ae295f2aa575acb3f2c711220f81
-	const { compareButtonText, handleCompareButtonClick } = useCompareModal(
-		productData,
-		accessToken,
-	);
+	const { compareButtonText, handleCompareButtonClick } =
+		useCompareModal(productData);
 
 	return (
 		<div className="flex min-w-[33.5rem] flex-col items-center md:flex-row lg:justify-between">
@@ -169,9 +153,8 @@ export function Share({ className }: ShareProps) {
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 			if (!window.Kakao.isInitialized()) {
-				window.Kakao.init("2fad6374928f2fdae3ad76e79d72417d");
+				window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY);
 			}
-			//env파일 key로 수정 예정
 		}
 	}, []);
 
@@ -182,10 +165,6 @@ export function Share({ className }: ShareProps) {
 				closeModal={() => closeModal(modalId)}
 				type="clipboard"
 			/>,
-			{
-				isCloseClickOutside: true,
-				isCloseESC: true,
-			},
 		);
 	};
 
@@ -197,14 +176,10 @@ export function Share({ className }: ShareProps) {
 
 	return (
 		<div className={cn("flex gap-[1rem]", className)}>
-<<<<<<< HEAD
-			<button className="flex size-[2.4rem] items-center justify-center rounded-[0.6rem] bg-black-bg lg:size-[2.8rem]">
-=======
 			<button
 				className="flex size-[2.4rem] items-center justify-center rounded-[0.6rem] bg-black-bg lg:size-[2.8rem]"
 				onClick={handleCopyKakao}
 			>
->>>>>>> 8956aa26bf80ae295f2aa575acb3f2c711220f81
 				<div className="relative size-[1.4rem] lg:size-[1.8rem]">
 					<Image
 						src="/icons/kakaotalk.svg"
@@ -242,13 +217,13 @@ export function Favorite({
 	const queryClient = useQueryClient();
 	const { openModal, closeModal } = useModalActions();
 
-	const { isError } = useQuery({
+	const { error } = useQuery({
 		queryKey: ["me"],
 		queryFn: () => getMe(),
 		retry: false,
 	});
 
-	const { mutate: toggleFavorite, error } = useMutation({
+	const { mutate: toggleFavorite } = useMutation({
 		mutationFn: () => (isFavorite ? deleteFavorite(id) : postFavorite(id)),
 		onMutate: () => {
 			const previous: ProductDetail | undefined = queryClient.getQueryData([
@@ -276,19 +251,17 @@ export function Favorite({
 		},
 	});
 	const handleButtonOnclick = () => {
-		if (isError) {
-			const modalId = openModal(
-				<MovingPageModal
-					closeModal={() => closeModal(modalId)}
-					description={moveModalText.signin}
-					url="/signin"
-				/>,
-				{
-					isCloseClickOutside: true,
-					isCloseESC: true,
-				},
-			);
-			return;
+		if (isAxiosError(error)) {
+			if (error.request.status === 401) {
+				const modalId = openModal(
+					<MovingPageModal
+						closeModal={() => closeModal(modalId)}
+						description={moveModalText.signin}
+						url="/signin"
+					/>,
+				);
+				return;
+			}
 		}
 
 		if (isMyProduct) {
@@ -297,10 +270,6 @@ export function Favorite({
 					closeModal={() => closeModal(modalId)}
 					type="favorite"
 				/>,
-				{
-					isCloseClickOutside: true,
-					isCloseESC: true,
-				},
 			);
 			return;
 		}

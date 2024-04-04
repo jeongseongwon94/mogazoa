@@ -24,14 +24,18 @@ export default function ReviewAlertModal({
 	const queryClient = useQueryClient();
 	const { mutate } = useMutation({
 		mutationFn: () => deleteReview(reviewId),
-		onSuccess: () =>
+		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["review", productId] }),
+				queryClient.invalidateQueries({
+					queryKey: ["productDetail", productId],
+				});
+		},
 	});
 
 	const mainText = () => {
 		switch (type) {
 			case "delete":
-				return "정말 삭제 하실껀가요 ?";
+				return "리뷰를 삭제하시겠습니까 ?";
 
 			case "favorite":
 				return "내 상품은 찜 할 수 없어요 !";

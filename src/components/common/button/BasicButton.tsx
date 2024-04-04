@@ -1,9 +1,11 @@
 import { cva, VariantProps } from "class-variance-authority";
+import { HTMLMotionProps, motion } from "framer-motion";
 import { ButtonHTMLAttributes, forwardRef } from "react";
 
 import cn from "@/utils/cn";
 
-type Props = ButtonHTMLAttributes<HTMLButtonElement> &
+type Props = HTMLMotionProps<"button"> &
+	ButtonHTMLAttributes<HTMLButtonElement> &
 	VariantProps<typeof buttonVariants> & {
 		label: string;
 		className?: string;
@@ -32,10 +34,12 @@ const BasicButton = forwardRef<HTMLButtonElement, Props>(function BasicButton(
 	ref,
 ) {
 	return (
-		<button
+		<motion.button
 			className={cn(buttonVariants({ variant }), className)}
 			disabled={disabled}
 			ref={ref}
+			whileHover={{ scale: 0.95, opacity: 0.8 }}
+			whileTap={{ scale: 0.95, opacity: 0.8 }}
 			{...props}
 		>
 			<span
@@ -45,7 +49,7 @@ const BasicButton = forwardRef<HTMLButtonElement, Props>(function BasicButton(
 			>
 				{label}
 			</span>
-		</button>
+		</motion.button>
 	);
 });
 
