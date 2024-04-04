@@ -1,16 +1,19 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import Image from "next/image";
 
 import { deleteFavorite, postFavorite } from "@/apis/products";
+import { getMe } from "@/apis/user";
 import useCompareModal from "@/hooks/compare/useCompareModal";
 import { useModalActions } from "@/store/modal";
 import { ProductDetail } from "@/types/product";
 import cn from "@/utils/cn";
 import getCookies from "@/utils/getCookies";
+import { moveModalText } from "@/utils/modalText";
 
 import BasicButton from "../common/button/BasicButton";
 import CategoryBadge from "../common/categoryBadge/CategoryBadge";
+import MovingPageModal from "../common/modal/MovingPageModal";
 import ReviewAlertModal from "./ReviewAlertModal";
 import ReviewModal from "./ReviewModal";
 
@@ -34,7 +37,31 @@ export default function DetailCard({ productData, isMyProduct }: Props) {
 	const { name, description, image, isFavorite, category, id } = productData;
 	const { openModal, closeModal } = useModalActions();
 
+	const { isError } = useQuery({
+		queryKey: ["me"],
+		queryFn: () => getMe(),
+		retry: false,
+	});
+
+	const cookie = getCookies();
+	const accessToken = cookie["accessToken"];
+
 	const handleReviewCreateButton = () => {
+		if (isError) {
+			const modalId = openModal(
+				<MovingPageModal
+					closeModal={() => closeModal(modalId)}
+					description={moveModalText.signin}
+					url="/signin"
+				/>,
+				{
+					isCloseClickOutside: true,
+					isCloseESC: true,
+				},
+			);
+			return;
+		}
+
 		const modalId = openModal(
 			<ReviewModal
 				type="create"
@@ -48,9 +75,6 @@ export default function DetailCard({ productData, isMyProduct }: Props) {
 		);
 	};
 
-	const cookie = getCookies();
-	const accessToken = cookie["accessToken"];
-
 	const { compareButtonText, handleCompareButtonClick } = useCompareModal(
 		productData,
 		accessToken,
@@ -58,7 +82,7 @@ export default function DetailCard({ productData, isMyProduct }: Props) {
 
 	return (
 		<div className="flex min-w-[33.5rem] flex-col items-center md:flex-row lg:justify-between">
-			<div className="relative min-h-[19.7rem] min-w-[28rem] lg:mx-[6rem]">
+			<div className="relative min-h-[21rem] min-w-[28rem] md:mr-[3rem] lg:mx-[6rem]">
 				<Image src={image} fill alt={name} className="object-contain" />
 			</div>
 			<div className="flex w-full flex-col">
@@ -138,7 +162,7 @@ export function Share({ className }: ShareProps) {
 
 	return (
 		<div className={cn("flex gap-[1rem]", className)}>
-			<button className="bg-black-bg flex size-[2.4rem] items-center justify-center rounded-[0.6rem] lg:size-[2.8rem]">
+			<button className="flex size-[2.4rem] items-center justify-center rounded-[0.6rem] bg-black-bg lg:size-[2.8rem]">
 				<div className="relative size-[1.4rem] lg:size-[1.8rem]">
 					<Image
 						src="/icons/kakaotalk.svg"
@@ -150,7 +174,7 @@ export function Share({ className }: ShareProps) {
 			</button>
 			{/**TODO: 카카오공유는 배포이후 추가 가능*/}
 			<button
-				className="bg-black-bg flex size-[2.4rem] items-center justify-center rounded-[0.6rem] lg:size-[2.8rem]"
+				className="flex size-[2.4rem] items-center justify-center rounded-[0.6rem] bg-black-bg lg:size-[2.8rem]"
 				onClick={handleCopyClipBoard}
 			>
 				<div className="relative size-[1.4rem] lg:size-[1.8rem]">
@@ -176,6 +200,12 @@ export function Favorite({
 	const heartOffIconSrc = "/icons/heart_off.svg";
 	const queryClient = useQueryClient();
 	const { openModal, closeModal } = useModalActions();
+
+	const { isError } = useQuery({
+		queryKey: ["me"],
+		queryFn: () => getMe(),
+		retry: false,
+	});
 
 	const { mutate: toggleFavorite, error } = useMutation({
 		mutationFn: () => (isFavorite ? deleteFavorite(id) : postFavorite(id)),
@@ -205,8 +235,18 @@ export function Favorite({
 		},
 	});
 	const handleButtonOnclick = () => {
-		if (error?.message === "Request failed with status code 401") {
-			alert("로그인해주세요!");
+		if (isError) {
+			const modalId = openModal(
+				<MovingPageModal
+					closeModal={() => closeModal(modalId)}
+					description={moveModalText.signin}
+					url="/signin"
+				/>,
+				{
+					isCloseClickOutside: true,
+					isCloseESC: true,
+				},
+			);
 			return;
 		}
 
