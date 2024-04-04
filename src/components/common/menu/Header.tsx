@@ -1,35 +1,31 @@
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { KeyboardEvent, useEffect, useState } from "react";
 
+import { getMe } from "@/apis/user";
 import useWindowWidth from "@/hooks/common/useWindowWidth";
 
 import NumberOfCompareProduct from "../numberOfCompareProduct/NumberOfCompareProduct";
 
 
-type UserType = {
-	id: number;
-};
-
 type HeaderType = "homeHeader" | "";
 
 type HeaderProps = {
-  user?: UserType;
   isSidebarOpen?: boolean;
   toggleSidebar?: () => void;
   headerType?: HeaderType;
 };
 
 export default function Header({
-  user,
   isSidebarOpen,
   toggleSidebar,
   headerType
 }: HeaderProps) {
   const currentWidth = useWindowWidth();
   const router = useRouter();
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSearchVisible, setSearchVisible] = useState(false);
   const [isLogoOverflow, setIsLogoOverflow] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -40,13 +36,31 @@ export default function Header({
   const searchSrc = "/icons/search.svg";
   const closeSrc = "/icons/close.svg";
 
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        await getMe();
+        setIsLoggedIn(true);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response && error.response.status===401) {
+          setIsLoggedIn(false);
+        } else {
+          alert('유저 정보를 불러오는 데 실패하였습니다: ' + error);
+        }
+      }
+    };
+
+    checkLoginStatus();
+
+  }, []); 
+
 	const toggleSearch = () => {
 		setSearchVisible(!isSearchVisible);
 	};
 
-	const toggleDropdown = () => {
-		setIsDropdownOpen(!isDropdownOpen);
-	};
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if(e.key === "Enter") {
@@ -57,9 +71,9 @@ export default function Header({
     }
   };
 
-	useEffect(() => {
-		setIsLogoOverflow(currentWidth < 430);
-	}, [currentWidth]);
+  useEffect(() => {
+    setIsLogoOverflow(currentWidth < 430);
+  }, [currentWidth])
 
   return (
     <>
@@ -91,32 +105,27 @@ export default function Header({
           <input placeholder='상품 이름을 검색해 보세요' value={searchValue} onChange={(e) => setSearchValue(e.target.value)} onKeyDown={handleKeyPress} className="w-[80%] bg-black-bg outline-none md:ml-[1rem] lg:ml-[2rem]" />
         </div>
         <div className="my-auto ml-[6rem] hidden font-normal text-white md:mr-[3rem] md:block md:text-[1.4rem] lg:mr-[12rem] lg:block lg:text-[1.6rem]">
-          <Link href={user ? '/compare' : '/signin'} className="min-w-[3.7rem] md:mr-[3rem] lg:mr-[6rem]">
-            {user ? '비교하기' : '로그인'}
+          <Link href={isLoggedIn ? '/compare' : '/signin'} className="min-w-[3.7rem] md:mr-[3rem] lg:mr-[6rem]">
+            {isLoggedIn ? '비교하기' : '로그인'}
+						<>{isLoggedIn && <NumberOfCompareProduct />}</>
           </Link>
-          <Link href={user ? '/mypage' : 'signup'} className="min-w-[4.9rem]">
-            {user ? '내 프로필' : '회원가입'}
+          <Link href={isLoggedIn ? '/mypage' : 'signup'} className="min-w-[4.9rem]">
+            {isLoggedIn ? '내 프로필' : '회원가입'}
           </Link>
         </div>
       </div>
     </div>
     {headerType !== "homeHeader" && isDropdownOpen && (
-				<div className="flex w-[100%] flex-col items-center gap-[2rem] pt-[3rem] text-[1.4rem] text-white md:hidden">
-					<Link
-						href={user ? "/compare" : "/signin"}
-						className="relative cursor-pointer"
-					>
-						{user ? "비교하기" : "로그인"}
-						<>{user && <NumberOfCompareProduct />}</>
-					</Link>
-					<Link
-						href={user ? "/mypage" : "signup"}
-						className="cursor-pointer"
-					>
-						{user ? "내 프로필" : "회원가입"}
-					</Link>
-				</div>
-			)}
+        <div className="flex w-[100%] flex-col items-center gap-[2rem] pt-[3rem] text-[1.4rem] text-white md:hidden">
+          <Link href={isLoggedIn ? '/compare' : '/signin'} className="cursor-pointer">
+            {isLoggedIn ? '비교하기' : '로그인'}
+						<>{isLoggedIn && <NumberOfCompareProduct />}</>
+          </Link>
+          <Link href={isLoggedIn ? '/mypage' : 'signup'} className="cursor-pointer">
+            {isLoggedIn ? '내 프로필' : '회원가입'}
+          </Link>
+        </div>
+      )}
     </>
   );
 }

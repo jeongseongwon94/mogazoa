@@ -37,6 +37,22 @@ export type Product = {
 	writerId: number;
 };
 
+export type ProductNames = {
+	name: string;
+};
+
+export type ProductNamesResponse = {
+	list: ProductNames[];
+	nextCursor: any;
+}
+
+export type PostProducts = {
+	categoryId: number;
+	image: string;
+	description: string;
+	name: string;
+}
+
 export type ProductsResponse = Response<Product>;
 
 export type UserProductType =

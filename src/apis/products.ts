@@ -25,6 +25,13 @@ export async function getProductDetail(productId: number) {
 	return data;
 }
 
+
+export async function getProductsName() {
+	const res = await instance.get("products");
+	const products: ProductDetail[] = res.data.list;
+	return products;
+}
+
 export async function getReviews({
 	productId,
 	order,
@@ -52,4 +59,24 @@ export async function postFavorite(productId: number) {
 
 export async function deleteFavorite(productId: number) {
 	await instance.delete<ProductDetail>(`products/${productId}/favorite`);
+}
+
+export async function postProducts(categoryId: number, image: string, description: string, name: string) {
+  const response = await instance.post('/products', {
+    categoryId,
+    image,
+    description,
+    name
+  });
+	return response.data;
+}
+
+export async function patchProduct(productId:number, categoryId: number, image: string, description: string, name: string) {
+	const response = await instance.patch(`products/${productId}`, {
+		categoryId,
+		image,
+		description,
+		name
+	});
+	return response.data;
 }
