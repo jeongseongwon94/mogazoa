@@ -153,7 +153,7 @@ export function Share({ className }: ShareProps) {
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 			if (!window.Kakao.isInitialized()) {
-				window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY);
+				window.Kakao.init("ac0de1fd203956b5d811703363b250ac");
 			}
 		}
 	}, []);
