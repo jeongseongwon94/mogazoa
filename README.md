@@ -18,17 +18,22 @@
 <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white"> <img src="https://img.shields.io/badge/tailwind css-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"> <img src="https://img.shields.io/badge/React Query-FF4154?style=for-the-badge&logo=reactquery&logoColor=white"> <img src="https://img.shields.io/badge/Storybook-FF4785?style=for-the-badge&logo=storybook&logoColor=white"> <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> <img src="https://img.shields.io/badge/vercel-000000?style=for-the-badge&logo=vercel&logoColor=white">
 
 ## 담당 제작 기능
-- 상품 상세 페이지 개발
-  - 상품 리뷰 생성/수정 모달 기능 구현
-  - 상품 찜, 리뷰 좋아요 optimistic Update 기능 구현
-  - 리뷰 목록 정렬 및 무한스크롤 기능 구현
-  - 카카오톡 공유 기능 구현
+- 상품 상세 페이지 개발 (사용자가 생성한 상품의 상세 정보와 리뷰를 확인하는 페이지)
+    - 상품 리뷰 생성/수정/삭제 모달 창 구현
+    - 리액트쿼리의 useMutation훅을 사용하여 상품 찜/ 리뷰 좋아요 낙관적 업데이트 구현 (optimistic update)
+    - 리뷰 목록 정렬 기능 버튼 구현
+    - Intersection Observer API를 사용하여 리뷰 목록 무한 스크롤 기능 구현
+    - 카카오톡 메시지API를 활용하여 카카오톡 공유하기 기능 구현
+
+<img width="863" alt="image" src="https://github.com/jeongseongwon94/mogazoa/assets/148832721/cc36ce06-57d7-47f4-82da-09f78213d31c">
+<img width="863" alt="image" src="https://github.com/jeongseongwon94/mogazoa/assets/148832721/08634229-8335-4f9c-9bab-f703b0c867d3">
+
 
 ## 트러블 슈팅
 - 페이지 에러처리<br/>
 상품 상세 페이지를 존재하지 않는 상품 번호로 접속하거나 문자열로 입력하여 접속할 경우 빈페이지가 표시 <br/> → 라우터의 query가 NaN으로 확인되거나 서버에서 상품을 불러오지못하여 에러가 발생한경우 홈화면으로 리다이렉트하도록 수정<br/>
 [관련 PR 링크](https://github.com/4-2-mogazoa/mogazoa/pull/165)
 
-## 🔗 배포링크
+## 배포링크
 
-[🔗Link](https://mogazoa4-2.vercel.app/)
+[Link](https://mogazoa4-2.vercel.app/)
